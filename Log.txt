@@ -1,0 +1,80 @@
+March 1, 2017
+	The first thing I think I should do is to create the physical objects associated with the "pieces" of a spaceship. I'm not sure how many pieces I want,
+	But I want to cover a large selection of possibilities by including the ability to create more aerodynamic pieces as well as different functioning pieces. For example, I will most definitely need a "Thruster" piece.
+March 2, 2017
+	Ok so the building blocks have been taken care of. Moving on to individuals in each generation. Before I do anything else, I need to specify a fitness function. 
+	I simply want it to be (height-reached)+(force in y direction)/cost. By doing it like this, I can reduce the amount of drag within the height reached variable, as increase the stability of the upward force. 
+	This will also insure lower cost. The force in the y direction is included so that when the initial individuals are created, they aren't prematurely eliminated as I'm fairly certain an overwhelming majority of them won't make it off the ground, 
+	thus they would all equally score 0. Implementing this requires I am able to calculate the "upward" force. I will take the volume of "fuel" total, divide that by the number of thrusters, 
+	then have each thruster exert a force in the direction they are facing on every update. This will continue until all the fuel is used up. This made me realize that I need to specify the standard size of each cube is 1m^3. 
+	Now I can put the variables for fuel rate combustion etc, in the hands of the user
+March 09, 2017
+	Added a rudimentary grid funstionality. It's not an octree or anything even remotely good, it's literally an object which holds six pointers.
+	This lets me build actual individuals though so I can get started on a method to create a random individual of size x.
+	I also added just added this to github for the first time so that I can hopefully work from home and get this done in time
+March 11, 2017
+	My datastructure is flawed, and Octree doesn't seemt to be what I'm looking for so I went looking for a new structure to represent 3D blocks.
+	This led me to  learn about Voxals, so I'm researching that and hopefully I can implement that as a Datastructure over Octree.
+	It's looking like voxals are going to work so I'm doing that
+March 13, 2017
+    Voxels worked pretty well, however I only implemented the block aspect of it and not the chunk aspect. This is also memory efficient because I can store each block in a dictionary with a flattened index. This way, I'm not 
+    creating a 3D array with a ton of empty nodes. I'm only contiguously adding memory as it is needed.
+    The next step now is creating individuals. I have implemented quite a few functions in a static BlockFunctions class which can simply be passed in the required arguments for whatever it is you are looking for.
+    Octree class is still present only because I'm still not sure if I could also implement it to make things more efficient.
+    First thing is to randomly create individuals etc.
+
+    I was thinking about submitting this to the cpsc showcase, but we'll see.
+March 14, 2017
+    I Realized that it would be a really good idea to make my randomizer static so that in the event that an output is interesting, a seed is setable so that the result can be duplicated. Also realized an error in my block functions.
+    When placing a block, I was not checking if the desired blocks orientation allowed it to be there, I was only checking if its neighbours' orientation allowed the block to be there. Fixed this because otherwise the blocks
+    would behave nonsensically. Also cleaned up my individual class by adding more functions to the blockfunctions class which allowed a block to be placed into an individual by simply calling a function. This way, I have less repeated code as
+    it becomes more more abstracted to general cases.
+    Also added the ability to create game objects from blocks. This will now let me be able to test everything I've done so far.
+March 17, 2017
+    Before I write a test class for my payload/individual, I need to write a way to serialize them to a file. This is important because say I want to test how the program mutated it, then I will need to have a contiguous container of
+    the best-scoring individual for each generation. Or say I implement a sort of clades-like feature. Then I will need to be able to show the path of mutations the user chose. To fulfill this, I've created a generational map class which will hold the
+    managers, as well as the list of chosen individuals, so that I can serialize it as a single file. I will make it so that you can save single ships if desire, or that you can also save full generational maps. So I will need a container from which to load
+    and save individuals/generations.
+March 18, 2017
+    Finished with some minor serialization classes. Time to create an actual test.
+    Testing showed some minor logic errors in my block functions class. A lot of dumb mistakes I made when creating it.
+    Not done with testing, but I am getting tired of being here on a saturday so I'm wrapping this up early.
+Mach 20, 2017
+    After looking more into the bugs, it seems that they constantly fail to place blocks in the y directions. More specifically is that blocks in the -y direction don't even get added to the open spaces list.
+    I think to make this a bit cleaner, I will alter my block class so that it doesn't use a bitmask as that is obviously getting to be incredibly confusing. Apart from that, the next bug to fix following this one is the addition of multiple blocks to the
+    individual in the same spot. I have absolutely no idea how it is generating blocks that have already been added as I specifically place a check to stop this, but apparently that is not enough. A quick janky fix is to simply have an additional conditional
+    right when a block is being placed that checks if one already exists in that spot. However this won't fix the ACTUAL issue as all the logic underneath shouldn't allow this anyway. If by the end of the day I can't find the cause, I'm simply putting
+    a conditional and hoping I find the issue later.
+    Ok I fixed the issue where blocks were not being added when they should be. I did this by removing the byte array as a bitmaks for open connections, and instead implemented a list of facing values (from the facing enum). This made it a lot easier to 
+    fix, and ended up working beautifully. I have included an example of a random payload in the repo.
+    AYYYYYY GOT IT TO WORK! The engine is now fully built.
+    Time to move onto the A.I. aspect
+March 22, 2017
+    Found an optimization which will really help in the future with holding how individual rockets/payloads are held. Essentially, I created a container which holds both a dicitonary of blocks, as well as a list of spaces we can add to. This will make it so
+    that I am able  pass around the arguments a lot easier, as well as cleaner return values.
+
+    Finished cleaning up the code, now moving on to testing if I can create a random hull.
+    Annnnnd random hull generation works as well. This means I have the initial generation working. Today was a good day. I've included some pictures showcasing the payload being surrounded by the hull. Next thing to work on is scoring each individual.
+
+    Added some functionality to block functions wherin we can now check if a block is fully surrounded or not. If it is, then we don't bother rendering it, nor do we give it a box collider.
+    This requires that the block objects you want to model must be created as prefabs with their colliders already on them
+
+    Now, the final thing to work on for an individual is the scoring mechanism. Then individuals will be done.
+March 21, 2017
+    Found the issue which made it so that I couldn't have a theoretical infinite block size. It was simply within how I was defining the dimensions of the "container" within which the blocks were being created. Moving onto the physics of this.
+
+    I've implemented the initialization of a simulation, where an individual has been fitted with many blocks, all which are joined together with basic physics. Now I need to start the time-step incrementation where the aerodynamics are all
+    calculated
+March 22, 2017
+    I had to change some things aqround having to do with the Thruster Indexing. I made it so that the gameobject is the key. If I didn't do it this way, then I would have not been able to figure out the actual direction the game object is facing,
+    and would have had issues when adding force opposite the rocket face.
+    I have added all the physics to the object, now just to test out a simulation.
+
+    I'm having an issue with the way scripts work in unity so I'm putting that off until I can talk to someone who knows more than me.
+    For now, I've started working on the A.I part;
+    Ok I have fixed it, and now I am scoringindividuals. I am going to need to tweak the physics a bit so that it isn't so easy to break, and actually performs the way I want, but for right now, it's pretty dang good.
+
+    The physics are fixed as well. It actually flies like a shitty rocket would. That is to say that it falls. HOWEVER, some are falling faster than others. And the scores are pretty big in differences so it's looking promising
+March 28, 2017
+    The log doesn't reflect it because I'm an idiot, but basically I had to roll back the last 6 days of work. Fuck.
+    Still not quite there but almost
