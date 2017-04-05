@@ -6,8 +6,9 @@ using UnityEngine;
 
 public static class GenerationFunctions
 {
-
+    public static bool locked;
     static Stack<Individual> toBeDone;
+    static int numberSimulated;
     static Generation currentlyWorking;
     /// <summary>
     /// We want to simulate each individual in this generation
@@ -15,16 +16,21 @@ public static class GenerationFunctions
     /// <param name="g"></param>
     public static void createNextGen(Generation g)
     {
+        locked = true;
+        Debug.Log("Why are we here?");
+        numberSimulated = 0;
         currentlyWorking = g;
-        EventHandler.onSimulationEnd += doNextSim;
-        EventHandler.onGenerationDone += finishGeneration;
+        CustomEventHandler.onIndividualSimulationDone += doNextSim;
+        CustomEventHandler.onGenerationSimulationDone += finishGeneration;
+
         ///Creating a stack of individuals we still need to score;
         toBeDone = new Stack<Individual>();
         foreach (Individual indi in currentlyWorking.currentGen)
         {
             toBeDone.Push(indi);
         }
-
+        numberSimulated++;
+        Debug.Log("Simulating " + toBeDone.Count);
         IndividualFunctions.Simulate(toBeDone.Pop());
     }
 
@@ -34,14 +40,17 @@ public static class GenerationFunctions
     /// </summary>
     private static void doNextSim()
     {
-        if (toBeDone.Count < 1)
+        if (numberSimulated < MutationManager.Instance.generationSize && toBeDone.Count > 0)
         {
-            EventHandler.finishedGenerationSimulation();
+            numberSimulated++;
+            IndividualFunctions.Simulate(toBeDone.Pop());
         }
         else
         {
-            IndividualFunctions.Simulate(toBeDone.Pop());
+            CustomEventHandler.finishedGenerationSimulation();
         }
+        
+
     }
     
     /// <summary>
@@ -57,12 +66,13 @@ public static class GenerationFunctions
                 currentlyWorking.bestMap.Add(i);
             }
         }
-        Debug.Log("All simulated");
+        Debug.Log("All simulated generation "+currentlyWorking.genNum);
         cullGeneration();
-        Debug.Log("Signalling Event");
+        mutateGeneration();
         ///We are now a new generation
         currentlyWorking.genNum++;
-        EventHandler.finishedGeneratingNewGen();
+        locked = false;
+        CustomEventHandler.finishedGeneratingGeneration();
     }
 
 
@@ -72,14 +82,11 @@ public static class GenerationFunctions
     /// <param name="g"></param>
     private static void cullGeneration()
     {
-        Debug.Log("culling...");
         currentlyWorking.currentGen = new List<Individual>();
         for (int i = 0; i < MutationManager.Instance.generationSize; i++)
         {
             currentlyWorking.currentGen.Add(new Individual(currentlyWorking.currentBest));
         }
-
-        mutateGeneration();
     }
 
 
@@ -88,7 +95,6 @@ public static class GenerationFunctions
     /// </summary>
     private static void mutateGeneration()
     {
-        Debug.Log("Mutating...");
         foreach (Individual indi in currentlyWorking.currentGen)
         {
             mutateIndividual(indi);
@@ -104,7 +110,6 @@ public static class GenerationFunctions
 
     private static void alterPieces(Individual indiv)
     {
-        Debug.Log("Altering Blocks...");
         ///For each pass defined by degree of mutation
         for (int i = 0; i < MutationManager.Instance.degreeToMutate; i++)
         {
@@ -153,7 +158,6 @@ public static class GenerationFunctions
 
     private static void addPieces(Individual indiv)
     {
-        Debug.Log("Adding Blocks...");
         List<double> insert = new List<double>();
         foreach(double b in indiv.hull.container.openSpaces)
         {
@@ -172,7 +176,6 @@ public static class GenerationFunctions
         {
             BlockFunctions.insertBlockAtRandom(indiv.hull.container);
         }
-        Debug.Log("Individual in generation "+ currentlyWorking.genNum+" created");
     }
 
 

@@ -93,7 +93,7 @@ class SimulationPhysics : MonoBehaviour
         {
             myParent.maxHeight = maxheight;
             IndividualFunctions.ScoreIndividual(myParent);
-            EventHandler.SelfDestruct(this.gameObject);
+            CustomEventHandler.SelfDestruct(this.gameObject);
         }
 
     }

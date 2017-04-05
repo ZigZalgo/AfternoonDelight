@@ -77,4 +77,4 @@ March 22, 2017
     The physics are fixed as well. It actually flies like a shitty rocket would. That is to say that it falls. HOWEVER, some are falling faster than others. And the scores are pretty big in differences so it's looking promising
 March 28, 2017
     The log doesn't reflect it because I'm an idiot, but basically I had to roll back the last 6 days of work. Fuck.
-    Still not quite there but almost
+    Still not quite there but almost.

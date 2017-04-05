@@ -25,10 +25,6 @@ public class BlockType
     [Range(0,9999999)]
     public int weight;
     /// <summary>
-    /// The possible connections this block allows
-    /// </summary>
-    public List<facing> connections;
-    /// <summary>
     /// The model this block uses (REQUIRED FOR PERFORMING THE PHYSICS
     /// </summary>
     public GameObject model;

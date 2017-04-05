@@ -2,19 +2,16 @@
 /// <summary>
 /// The Memory representation of a block
 /// </summary>
-[DataContract]
+
 public class Block
 {
-    [DataMember]
-    public bool isActive;
 
-    [DataMember]
     public facing face { set; get; }
 
-    [DataMember]
+    
     public rotation rotate { set; get; }
 
-    [DataMember]
+    
     public int type { set; get; }
 
     /// <summary>
@@ -23,9 +20,8 @@ public class Block
     /// </summary>
     /// <param name="active"></param>
     /// <param name="UID">The UID of the block type</param>
-    public Block(bool b, int TID, facing face, rotation rot)
+    public Block(int TID, facing face, rotation rot)
     {
-        this.isActive = b;
         this.type = TID;
         this.face = face;
         this.rotate = rot;
@@ -35,18 +31,18 @@ public class Block
     /// Create a non-active block of type t facing 0, and not rotated
     /// </summary>
     /// <param name="TID">The TID of the block type</param>
-    public Block(int TID) : this(false, TID, facing.BACK, rotation.R0) { }
+    public Block(int TID) : this(TID, facing.BACK, rotation.R0) { }
 
     /// <summary>
     /// Create a decidably active block of type t facing default, and not rotated
     /// </summary>
     /// <param name="TID">The TID of the block type</param>
-    public Block(bool b, int TID) : this(b, TID, facing.BACK, rotation.R0) { }
+    public Block(bool b, int TID) : this(TID, facing.BACK, rotation.R0) { }
 
     /// <summary>
     /// For creating empty blocks in chunks
     /// </summary>
-    public Block(): this(false, 0, facing.BACK, rotation.R0){}
+    public Block(): this(0, facing.BACK, rotation.R0){}
 }
 
 public enum facing

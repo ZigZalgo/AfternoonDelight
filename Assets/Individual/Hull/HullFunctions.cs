@@ -26,7 +26,6 @@ class HullFunctions
                 count++;
             }
         }
-        Debug.Log("hullSize created with size of " + count);
         return hull;
     }
 

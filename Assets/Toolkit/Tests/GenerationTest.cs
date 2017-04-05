@@ -13,33 +13,29 @@ class GenerationTest : MonoBehaviour
     private int count;
     Generation gen;
     GameObject follow;
+    bool finish = false;
 
     void Start()
     {
-        EventHandler.onNewGenCompletion += createNextGen;
+        Mathf.Clamp(generations, 1, 100);
+        CustomEventHandler.onGenerationGenerated += createNextGen;
         count = 0;
         Randomizer.newSeed();
         gen = new Generation();
         GenerationFunctions.createNextGen(gen);
+        Camera.main.transform.position = new Vector3(25, 25, 25);
+        Camera.main.transform.LookAt(Vector3.zero);
 
     }
 
     public void createNextGen()
     {
-        
-        Debug.Log("In the delegate");
-        
-        if (count <= generations)
+        if (!GenerationFunctions.locked)
         {
             GenerationFunctions.createNextGen(gen);
-            count++;
-        }
-        else
-        {
-        
-            lookAtBest();
         }
     }
+
 
     private void lookAtBest()
     {
@@ -67,6 +63,19 @@ class GenerationTest : MonoBehaviour
         {
             Camera.main.transform.position = follow.transform.position + new Vector3(0, 0, -20);
             Camera.main.transform.LookAt(follow.transform);
+        }
+        if(Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            if (finish)
+            {
+                Debug.Log("Resuming Simulation"); 
+            }
+            else
+            {
+                Debug.Log("Simulation ending. Please wait for the current generation to finish simulating in order to receive the results");
+
+            }
+            finish = !finish;
         }
     }
 

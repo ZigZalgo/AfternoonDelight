@@ -147,78 +147,6 @@ public static class BlockFunctions
 
     #region block bitmask usage
     /// <summary>
-    /// Checks whether a connection is allowed to a specific face of a block.
-    /// For example, if I want to check if I can place a block in the negative y direction to me,
-    /// I would pass in the block as well as facing.DOWN because I want to check if I can place a block DOWN
-    /// from me.
-    /// </summary>
-    /// <param name="b"></param>
-    /// <param name="connection">THE FACE YOU ARE TESTING, NOT THE FACE YOU ARE FACING</param>
-    /// <returns></returns>
-    internal static bool testFaceAllowedforBlock(Block b, facing connection)
-    {
-        if (b == null)
-        {
-            return true;
-        }
-        BlockType type = blockMan.blockTypes[b.type];
-        List<facing> connections = type.connections;
-        ///We need to correct the bitmask if we want to allow for rotation and facing
-        List<facing> correctedFaces = correctConnections(connections, b.face, b.rotate);
-        ///if bit is set at our facing position, then we are allowed to place
-        return correctedFaces.Contains(connection);
-    }
-
-    /// <summary>
-    /// Will take a general bitmask which identifies what possible sides are allowed connections in the default
-    /// orientation, and will output the transformed bitmask for a given orientation.
-    /// </summary>
-    /// <param name="b">the input connections</param>
-    /// <param name="f">the facing value</param>
-    /// <param name="r">the rotation value</param>
-    /// <returns></returns>
-    internal static List<facing> correctConnections(List<facing> b, facing f, rotation r)
-    {
-        List<facing> rotatedList = new List<facing>();
-        List<facing> orientedList = new List<facing>();
-        rotatedList = rotateConnections(b, r);
-        orientedList = orientConnections(rotatedList, f);
-        return orientedList;
-    }
-
-    /// <summary>
-    /// Rotates all the faces of a connection list
-    /// </summary>
-    /// <param name="connections"></param>
-    /// <param name="r"></param>
-    /// <returns></returns>
-    internal static List<facing> rotateConnections(List<facing> connections, rotation r)
-    {
-        List<facing> rotated = new List<facing>();
-        foreach (facing unrotated in connections)
-        {
-            rotated.Add(rotateFace(unrotated, r));
-        }
-        return rotated;
-    }
-
-    /// <summary>
-    /// orients all the faces of a connection list
-    /// </summary>
-    /// <param name="connections"></param>
-    /// <param name="r"></param>
-    /// <returns></returns>
-    internal static List<facing> orientConnections(List<facing> connections, facing r)
-    {
-        List<facing> oriented = new List<facing>();
-        foreach (facing unrotated in connections)
-        {
-            oriented.Add(orientFace(unrotated, r));
-        }
-        return oriented;
-    }
-
-    /// <summary>
     /// Takes a face and a rotation, and returns what that face should be after rotation
     /// </summary>
     /// <param name="before">the face</param>
@@ -445,7 +373,7 @@ public static class BlockFunctions
         BlockType desired = blocks[random.Next(0, blocks.Count - 1)];
         facing face = Randomizer.RandomEnumValue<facing>();
         rotation rot = Randomizer.RandomEnumValue<rotation>();
-        Block pBlock = new Block(true, desired.UID, face, rot);
+        Block pBlock = new Block(desired.UID, face, rot);
         return pBlock;
     }
 
@@ -462,7 +390,7 @@ public static class BlockFunctions
         ///This is our block
         facing face = Randomizer.RandomEnumValue<facing>();
         rotation rot = Randomizer.RandomEnumValue<rotation>();
-        Block pBlock = new Block(true, type.UID, face, rot);
+        Block pBlock = new Block(type.UID, face, rot);
 
         ///If we've gotten to this point, then we can successfully place ourself into the individual
         /*

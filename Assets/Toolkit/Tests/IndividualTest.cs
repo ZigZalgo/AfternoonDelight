@@ -27,7 +27,7 @@ class IndividualTest : MonoBehaviour
 
         }
         */
-        EventHandler.onSimulationEnd += this.endSim;
+        CustomEventHandler.onIndividualSimulationDone += this.endSim;
         Randomizer.newSeed();
         indiv = new Individual();
         /*
