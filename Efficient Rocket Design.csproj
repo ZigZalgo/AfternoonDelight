@@ -95,7 +95,7 @@
     <Compile Include="Assets\Individual\Hull\RocketHull.cs" />
     <Compile Include="Assets\Individual\SimulationPhysics.cs" />
     <Compile Include="Assets\Managers\BlockManager.cs" />
-    <Compile Include="Assets\Managers\EventHandler.cs" />
+    <Compile Include="Assets\Managers\CustomEventHandler.cs" />
     <Compile Include="Assets\Managers\IndividualManager.cs" />
     <Compile Include="Assets\Managers\MutationManager.cs" />
     <Compile Include="Assets\Toolkit\IndividualDatastructure.cs" />

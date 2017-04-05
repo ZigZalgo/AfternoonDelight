@@ -6,22 +6,16 @@ using UnityEngine;
 
 public static class GenerationFunctions
 {
-    public static bool locked;
     static Stack<Individual> toBeDone;
     static int numberSimulated;
     static Generation currentlyWorking;
-    /// <summary>
-    /// We want to simulate each individual in this generation
-    /// </summary>
-    /// <param name="g"></param>
-    public static void createNextGen(Generation g)
+    public static bool continueSimulation = true;
+
+
+    public static void init(Generation g)
     {
-        locked = true;
-        Debug.Log("Why are we here?");
-        numberSimulated = 0;
         currentlyWorking = g;
         CustomEventHandler.onIndividualSimulationDone += doNextSim;
-        CustomEventHandler.onGenerationSimulationDone += finishGeneration;
 
         ///Creating a stack of individuals we still need to score;
         toBeDone = new Stack<Individual>();
@@ -29,8 +23,27 @@ public static class GenerationFunctions
         {
             toBeDone.Push(indi);
         }
-        numberSimulated++;
-        Debug.Log("Simulating " + toBeDone.Count);
+    }
+
+    public static void performSearch()
+    {
+        if (continueSimulation)
+        {
+            foreach (Individual indi in currentlyWorking.currentGen)
+            {
+                toBeDone.Push(indi);
+            }
+            createNextGen();
+        }
+    }
+
+
+    /// <summary>
+    /// We want to simulate each individual in this generation
+    /// </summary>
+    /// <param name="g"></param>
+    public static void createNextGen()
+    {  
         IndividualFunctions.Simulate(toBeDone.Pop());
     }
 
@@ -40,23 +53,21 @@ public static class GenerationFunctions
     /// </summary>
     private static void doNextSim()
     {
-        if (numberSimulated < MutationManager.Instance.generationSize && toBeDone.Count > 0)
+        if (toBeDone.Count > 0)
         {
             numberSimulated++;
             IndividualFunctions.Simulate(toBeDone.Pop());
         }
-        else
+        else if (!CustomEventHandler.locked)
         {
-            CustomEventHandler.finishedGenerationSimulation();
+            finishGenerationSimulation();
         }
-        
-
     }
     
     /// <summary>
     /// We are done simulating so we need to score, and move on to culling/replacing
     /// </summary>
-    private static void finishGeneration()
+    private static void finishGenerationSimulation()
     {
         foreach (Individual i in currentlyWorking.currentGen)
         {
@@ -66,13 +77,14 @@ public static class GenerationFunctions
                 currentlyWorking.bestMap.Add(i);
             }
         }
-        Debug.Log("All simulated generation "+currentlyWorking.genNum);
+        Debug.Log("Generation "+currentlyWorking.genNum+" done being simulated.");
         cullGeneration();
+        Debug.Log("Mutating...");
         mutateGeneration();
         ///We are now a new generation
         currentlyWorking.genNum++;
-        locked = false;
-        CustomEventHandler.finishedGeneratingGeneration();
+        Debug.Log("Generation " + currentlyWorking.genNum + " ready for simulating");
+        performSearch();
     }
 
 

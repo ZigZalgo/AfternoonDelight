@@ -9,33 +9,22 @@ class GenerationTest : MonoBehaviour
 
     public GameObject marker;
     public Material mat;
-    public int generations;
-    private int count;
     Generation gen;
     GameObject follow;
-    bool finish = false;
+
+
+    bool finished = false;
 
     void Start()
     {
-        Mathf.Clamp(generations, 1, 100);
-        CustomEventHandler.onGenerationGenerated += createNextGen;
-        count = 0;
         Randomizer.newSeed();
         gen = new Generation();
-        GenerationFunctions.createNextGen(gen);
+        GenerationFunctions.init(gen);
+        GenerationFunctions.createNextGen();
         Camera.main.transform.position = new Vector3(25, 25, 25);
         Camera.main.transform.LookAt(Vector3.zero);
 
     }
-
-    public void createNextGen()
-    {
-        if (!GenerationFunctions.locked)
-        {
-            GenerationFunctions.createNextGen(gen);
-        }
-    }
-
 
     private void lookAtBest()
     {
@@ -66,16 +55,16 @@ class GenerationTest : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.LeftControl))
         {
-            if (finish)
+            if (GenerationFunctions.continueSimulation)
             {
-                Debug.Log("Resuming Simulation"); 
+                Debug.Log("Simulation ending. Please wait for the current generation to finish simulating in order to receive the results");
+                
             }
             else
             {
-                Debug.Log("Simulation ending. Please wait for the current generation to finish simulating in order to receive the results");
-
+                Debug.Log("Resuming Simulation"); 
             }
-            finish = !finish;
+            GenerationFunctions.continueSimulation = !GenerationFunctions.continueSimulation;
         }
     }
 

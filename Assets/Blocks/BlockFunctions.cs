@@ -75,7 +75,8 @@ public static class BlockFunctions
 
     #region Neighbour Checking
     /// <summary>
-    /// Returns true if a block is surrounded on all sides.
+    /// Returns 
+    /// if a block is surrounded on all sides.
     /// </summary>
     /// <param name="v1"></param>
     /// <param name="index"></param>
