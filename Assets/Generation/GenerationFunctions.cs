@@ -35,6 +35,11 @@ public static class GenerationFunctions
             }
             createNextGen();
         }
+        else
+        {
+            string path = saveGenerationalMap();
+            GameObject.FindObjectOfType<GenerationTest>().finish(path);         
+        }
     }
 
 
@@ -53,13 +58,18 @@ public static class GenerationFunctions
     /// </summary>
     private static void doNextSim()
     {
-        if (toBeDone.Count > 0)
+        if (numberSimulated < MutationManager.Instance.generationSize - 1)
         {
+            if(toBeDone.Count < 1)
+            {
+                return;
+            }
             numberSimulated++;
             IndividualFunctions.Simulate(toBeDone.Pop());
         }
-        else if (!CustomEventHandler.locked)
+        else
         {
+            numberSimulated = 0;
             finishGenerationSimulation();
         }
     }
@@ -74,16 +84,15 @@ public static class GenerationFunctions
             if (currentlyWorking.currentBest == null || currentlyWorking.currentBest.score < i.score)
             {
                 currentlyWorking.currentBest = i;
+                Debug.Log("Score :" + currentlyWorking.currentBest.score);
                 currentlyWorking.bestMap.Add(i);
             }
         }
-        Debug.Log("Generation "+currentlyWorking.genNum+" done being simulated.");
         cullGeneration();
-        Debug.Log("Mutating...");
         mutateGeneration();
         ///We are now a new generation
         currentlyWorking.genNum++;
-        Debug.Log("Generation " + currentlyWorking.genNum + " ready for simulating");
+        Debug.Log("Generation " + currentlyWorking.genNum);
         performSearch();
     }
 
@@ -190,7 +199,18 @@ public static class GenerationFunctions
         }
     }
 
+    public static string saveGenerationalMap()
+    {
+        string pathName = "gM" + DateTime.Now.ToBinary() + ".ERD";
+        Serializer<GenerationalMap> serializer = new Serializer<GenerationalMap>();
+        GenerationalMap map = new GenerationalMap(BlockManager.Instance,
+                                                  IndividualManager.Instance,
+                                                  MutationManager.Instance,
+                                                  currentlyWorking.bestMap);
 
+        serializer.Serialize(pathName, map);
+        return pathName;
+    }
 
 
 }

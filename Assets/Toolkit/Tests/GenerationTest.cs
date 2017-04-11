@@ -7,8 +7,6 @@ using UnityEngine;
 class GenerationTest : MonoBehaviour
 {
 
-    public GameObject marker;
-    public Material mat;
     Generation gen;
     GameObject follow;
 
@@ -26,23 +24,22 @@ class GenerationTest : MonoBehaviour
 
     }
 
-    private void lookAtBest()
+    public void finish(string path)
     {
-        for (int i = -100; i < 100; i += 2)
-        {
-            GameObject mark = GameObject.Instantiate(marker);
-            mark.transform.position = new Vector3(0, i, 20);
-            if (i % 10 == 0)
-            {
-                mark.GetComponent<MeshRenderer>().material = mat;
-            }
-
-        }
-
         Time.timeScale = 1;
-        Debug.Log(gen.currentBest.score);
-        Individual copy = new Individual(gen.currentBest);
-        follow = IndividualFunctions.Simulate(copy);
+        Serializer<GenerationalMap> serializer = new Serializer<GenerationalMap>();
+        GenerationalMap map = serializer.Deserialize(path);
+        BlockManager.set(map.blockMan);
+        MutationManager.set(map.mutateMan);
+        IndividualManager.set(map.indivMan);
+
+        List<Individual> gens = map.contains as List<Individual>;
+        Debug.Log("Cost : "+gens[gens.Count - 1].cost);
+        Debug.Log("Fuel (m^3) : " + gens[gens.Count - 1].fuelVolume);
+        Debug.Log("Wegiht : "+gens[gens.Count - 1].weight);
+        Debug.Log("Score : " + gens[gens.Count - 1].score);
+
+        follow = IndividualFunctions.Instantiate(gens[gens.Count - 1]);
 
     }
 

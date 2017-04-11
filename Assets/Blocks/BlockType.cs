@@ -27,6 +27,6 @@ public class BlockType
     /// <summary>
     /// The model this block uses (REQUIRED FOR PERFORMING THE PHYSICS
     /// </summary>
-    public GameObject model;
+    public UnityEngine.GameObject model;
 }
 

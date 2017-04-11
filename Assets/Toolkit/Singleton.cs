@@ -14,6 +14,11 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
         }
     }
 
+    public static void set(T i)
+    {
+        instance = i;
+    }
+
     /// <summary>
     /// Returns whether the instance has been initialized or not.
     /// </summary>

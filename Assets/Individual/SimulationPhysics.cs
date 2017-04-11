@@ -86,11 +86,19 @@ class SimulationPhysics : MonoBehaviour
                 }
             }
             maxheight = Mathf.Max(transform.position.y, maxheight);
+            if (myParent.Equals(null))
+            {
+                return;
+            }
             myParent.timeInAir += 1;
         }
         ///If we're done, we signal to kill ourselves to the event handler
         else
         {
+            if (myParent.Equals(null))
+            {
+                return;
+            }
             myParent.maxHeight = maxheight;
             IndividualFunctions.ScoreIndividual(myParent);
             CustomEventHandler.SelfDestruct(this.gameObject);
