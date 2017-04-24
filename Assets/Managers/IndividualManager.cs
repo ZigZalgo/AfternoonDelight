@@ -9,14 +9,14 @@ public class IndividualManager : Singleton<IndividualManager>
     /// The force the fuel outputs per 1m^3
     /// </summary>
     [Tooltip("The amount of force your fuel outputs at each time step delta")]
-    [Range(1, 100000)]
+    [Range(1, 1000000)]
     public float fuelForce;
 
     /// <summary>
     /// The amount of fuel consumed per force added (optimally occurs per frame)
     /// </summary>
     [Tooltip("The amount of fuel that is consumed per time step delta")]
-    [Range(0, 20)]
+    [Range(0, 100)]
     public float fuelConsumption;
 
     /// <summary>
@@ -25,6 +25,9 @@ public class IndividualManager : Singleton<IndividualManager>
     [Tooltip("How large you want the rockets to become")]
     [Range(1, 2000)]
     public int maxIndividualSize;
+
+    [Tooltip("The size of the originally random payload")]
+    public int payloadSize;
 
     [Tooltip("The number of blocks contained within any newly created individual")]
     [Range(1, 500)]

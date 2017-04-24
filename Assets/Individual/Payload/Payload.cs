@@ -11,7 +11,7 @@ public class Payload : BlockAssortmentContainer
     /// </summary>
     public Payload()
     {
-        container = PayloadFunctions.createRandomPayload(1);
+        container = PayloadFunctions.createRandomPayload(IndividualManager.Instance.payloadSize);
     }
 
     /// <summary>

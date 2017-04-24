@@ -10,6 +10,8 @@ public static class GenerationFunctions
     static int numberSimulated;
     static Generation currentlyWorking;
     public static bool continueSimulation = true;
+    static float lastBest = 0;
+    static int genNumberWithSame = 0;
 
 
     public static void init(Generation g)
@@ -37,8 +39,7 @@ public static class GenerationFunctions
         }
         else
         {
-            string path = saveGenerationalMap();
-            GameObject.FindObjectOfType<GenerationTest>().finish(path);         
+            GameObject.FindObjectOfType<GenerationTest>().finish(currentlyWorking);         
         }
     }
 
@@ -103,6 +104,29 @@ public static class GenerationFunctions
     /// <param name="g"></param>
     private static void cullGeneration()
     {
+        if(lastBest == currentlyWorking.currentBest.score)
+        {
+            genNumberWithSame++;
+        }
+        else
+        {
+            genNumberWithSame = 0;
+            lastBest = currentlyWorking.currentBest.score;
+        }
+
+        if(genNumberWithSame > MutationManager.Instance.numOfGenerationsWithoutImprovement)
+        {
+            if(currentlyWorking.bestMap.Count != 1)
+            {
+                //Increases the chance of mutation
+                MutationManager.Instance.doNothingProbability *= 0.8f;
+                currentlyWorking.bestMap.RemoveAt(currentlyWorking.bestMap.Count - 1);
+                currentlyWorking.currentBest = currentlyWorking.bestMap[currentlyWorking.bestMap.Count - 1];
+                lastBest = 0;
+                genNumberWithSame = 0;
+            }
+            
+        }
         currentlyWorking.currentGen = new List<Individual>();
         for (int i = 0; i < MutationManager.Instance.generationSize; i++)
         {

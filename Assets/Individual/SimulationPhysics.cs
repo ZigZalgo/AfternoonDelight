@@ -56,6 +56,10 @@ class SimulationPhysics : MonoBehaviour
     /// </summary>
     public void FixedUpdate()
     {
+        if (this.Equals(null))
+        {
+            return;
+        }
         if (transform.position.y > -50)
         {
             foreach (GameObject body in children)
@@ -86,6 +90,10 @@ class SimulationPhysics : MonoBehaviour
                 }
             }
             maxheight = Mathf.Max(transform.position.y, maxheight);
+            if (this.Equals(null))
+            {
+                return;
+            }
             if (myParent.Equals(null))
             {
                 return;
@@ -95,6 +103,10 @@ class SimulationPhysics : MonoBehaviour
         ///If we're done, we signal to kill ourselves to the event handler
         else
         {
+            if (this.Equals(null))
+            {
+                return;
+            }
             if (myParent.Equals(null))
             {
                 return;

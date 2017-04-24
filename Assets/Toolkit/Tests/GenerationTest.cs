@@ -24,22 +24,22 @@ class GenerationTest : MonoBehaviour
 
     }
 
-    public void finish(string path)
+    public void finish(Generation gen)
     {
-        Time.timeScale = 1;
-        Serializer<GenerationalMap> serializer = new Serializer<GenerationalMap>();
-        GenerationalMap map = serializer.Deserialize(path);
-        BlockManager.set(map.blockMan);
-        MutationManager.set(map.mutateMan);
-        IndividualManager.set(map.indivMan);
 
-        List<Individual> gens = map.contains as List<Individual>;
-        Debug.Log("Cost : "+gens[gens.Count - 1].cost);
-        Debug.Log("Fuel (m^3) : " + gens[gens.Count - 1].fuelVolume);
-        Debug.Log("Wegiht : "+gens[gens.Count - 1].weight);
-        Debug.Log("Score : " + gens[gens.Count - 1].score);
+        Individual best = gen.currentBest;
+        Debug.Log("Cost : "+best.cost);
+        Debug.Log("Fuel (m^3) : " + best.fuelVolume);
+        Debug.Log("Weight : "+best.weight);
+        Debug.Log("Score : " + best.score);
+        Debug.Log("Height : " + best.maxHeight);
+        Debug.Log("Time in Air : " + best.timeInAir);
 
-        follow = IndividualFunctions.Instantiate(gens[gens.Count - 1]);
+        Individual copy = new Individual(best);
+
+        GameObject bestObject = IndividualFunctions.Instantiate(copy);
+        UnityEngine.Object.Destroy(bestObject.GetComponent<Rigidbody>());
+        follow = bestObject;
 
     }
 

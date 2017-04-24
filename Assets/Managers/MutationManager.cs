@@ -16,11 +16,15 @@ public class MutationManager : Singleton<MutationManager>
     public float alterOrDeleteProbability;
 
     [Tooltip("The maximum size of each generation of individuals")]
-    [Range(1, 1000)]
+    [Range(1, 5000)]
     public int generationSize;
 
     [Range(1, 10)]
     [Tooltip("The number of times we iterate over an individual between generations. The greater this number, the more mutations occure.")]
     public int degreeToMutate;
+
+    [Range(1, 20)]
+    [Tooltip("The number of generations of nothing happening before the algorithm decides to start muating on a previous individual")]
+    public int numOfGenerationsWithoutImprovement;
 }
 
