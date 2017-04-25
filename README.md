@@ -14,6 +14,8 @@ Download or pull the repo, and open within unity. Currently the only interface i
 
 ## Quick-Setup
 
+A Video guide to installation can be found [here](https://youtu.be/LjwAEPznd-w)
+
 There's three included setups;
 	Infinite Flight:
 		- The rockets are relatively small, but fuel consumption is incredibly small. This leads to
