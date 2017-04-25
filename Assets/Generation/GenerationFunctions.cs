@@ -223,19 +223,6 @@ public static class GenerationFunctions
         }
     }
 
-    public static string saveGenerationalMap()
-    {
-        string pathName = "gM" + DateTime.Now.ToBinary() + ".ERD";
-        Serializer<GenerationalMap> serializer = new Serializer<GenerationalMap>();
-        GenerationalMap map = new GenerationalMap(BlockManager.Instance,
-                                                  IndividualManager.Instance,
-                                                  MutationManager.Instance,
-                                                  currentlyWorking.bestMap);
-
-        serializer.Serialize(pathName, map);
-        return pathName;
-    }
-
 
 }
 
